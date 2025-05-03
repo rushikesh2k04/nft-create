@@ -1,63 +1,106 @@
 // src/components/Home.tsx
+import * as algokit from '@algorandfoundation/algokit-utils'
 import { useWallet } from '@txnlab/use-wallet-react'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import ConnectWallet from './components/ConnectWallet'
-import Transact from './components/Transact'
+import MethodCall from './components/MethodCall'
+import * as methods from './methods'
+import { getAlgodConfigFromViteEnvironment } from './utils/network/getAlgoClientConfigs'
+import NFTForm from './components/NFTForm'
 
-interface HomeProps {}
+import './styles/Home.css'
 
-const Home: React.FC<HomeProps> = () => {
-  const [openWalletModal, setOpenWalletModal] = useState<boolean>(false)
-  const [openDemoModal, setOpenDemoModal] = useState<boolean>(false)
-  const { activeAddress } = useWallet()
+const Home: React.FC = () => {
+  const [openWalletModal, setOpenWalletModal] = useState(false)
+  const { activeAddress, transactionSigner: TransactionSigner } = useWallet()
 
-  const toggleWalletModal = () => {
-    setOpenWalletModal(!openWalletModal)
-  }
+  const toggleWalletModal = () => setOpenWalletModal(!openWalletModal)
 
-  const toggleDemoModal = () => {
-    setOpenDemoModal(!openDemoModal)
-  }
+  const [assetId, setAssetId] = useState<bigint>(0n)
+  const [unitaryPrice, setUnitaryPrice] = useState<bigint>(0n)
+  const [assetname, setassetname] = useState<string>("")
+  const [int_quantity, setInt_quanity] = useState<bigint>(0n)
+  const [int_decimals, setInt_decimals] = useState<number>(0)
+  const [ipfsCID, setIpfsCID] = useState<string>("")
+
+  const algodConfig = getAlgodConfigFromViteEnvironment()
+  const algorand = algokit.AlgorandClient.fromConfig({ algodConfig })
+
+  useEffect(() => {
+    if (TransactionSigner) algorand.setDefaultSigner(TransactionSigner)
+  }, [TransactionSigner])
 
   return (
-    <div className="hero min-h-screen bg-teal-400">
-      <div className="hero-content text-center rounded-lg p-6 max-w-md bg-white mx-auto">
-        <div className="max-w-md">
-          <h1 className="text-4xl">
-            Welcome to <div className="font-bold">AlgoKit 🙂</div>
-          </h1>
-          <p className="py-6">
-            This starter has been generated using official AlgoKit React template. Refer to the resource below for next steps.
-          </p>
+    <div className="home-container">
+      <div className="form-card">
+        <h1>Welcome to <span className="bold">AlgoKit 🙂</span></h1>
+        <p className="subtitle">Digital Market - Sell your asset at your fingertips</p>
 
-          <div className="grid">
-            <a
-              data-test-id="getting-started"
-              className="btn btn-primary m-2"
-              target="_blank"
-              href="https://github.com/algorandfoundation/algokit-cli"
-            >
-              Getting started
-            </a>
+        <button className="wallet-btn" onClick={toggleWalletModal}>
+          Wallet Connection
+        </button>
 
-            <div className="divider" />
-            <button data-test-id="connect-wallet" className="btn m-2" onClick={toggleWalletModal}>
-              Wallet Connection
-            </button>
+        <label>Unitary Price (ALGO)</label>
+        <input
+          type="number"
+          value={(unitaryPrice / 1_000_000n).toString()}
+          onChange={(e) =>
+            setUnitaryPrice(BigInt(e.currentTarget.valueAsNumber || 0) * 1_000_000n)
+          }
+        />
 
-            {activeAddress && (
-              <button data-test-id="transactions-demo" className="btn m-2" onClick={toggleDemoModal}>
-                Transactions Demo
-              </button>
-            )}
-          </div>
+        <label>Asset Name</label>
+        <input
+          type="text"
+          value={assetname}
+          onChange={(e) => setassetname(e.currentTarget.value || "")}
+        />
 
-          <ConnectWallet openModal={openWalletModal} closeModal={toggleWalletModal} />
-          <Transact openModal={openDemoModal} setModalState={setOpenDemoModal} />
-        </div>
+        <label>Asset Quantity</label>
+        <input
+          type="number"
+          value={int_quantity.toString()}
+          onChange={(e) =>
+            setInt_quanity(BigInt(e.currentTarget.valueAsNumber || 0))
+          }
+        />
+
+        <label>Decimals</label>
+        <input
+          type="number"
+          value={int_decimals.toString()}
+          onChange={(e) =>
+            setInt_decimals(Number(e.currentTarget.valueAsNumber || 0))
+          }
+        />
+
+        <h2>Upload NFT Metadata</h2>
+        <NFTForm onUploadComplete={(cid) => setIpfsCID(cid)} />
+
+        <MethodCall
+          methodFunction={async () => {
+            if (!ipfsCID) {
+              alert("Upload metadata to IPFS first.");
+              return;
+            }
+            const assetUrl = `https://ipfs.io/ipfs/${ipfsCID}#arc3`;
+            const newAssetId = await methods.create(
+              algorand,
+              activeAddress!,
+              int_quantity,
+              int_decimals,
+              assetname,
+              assetUrl
+            );
+            setAssetId(newAssetId);
+          }}
+          text="Create Application"
+        />
+
+        <ConnectWallet openModal={openWalletModal} closeModal={toggleWalletModal} />
       </div>
     </div>
   )
 }
 
-export default Home
+export default Home;
