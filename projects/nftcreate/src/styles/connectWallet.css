@@ -1,0 +1,129 @@
+/* Modal Background */
+.modal {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+/* Modal Content */
+.modal-box {
+  background-color: #ffffff;
+  border-radius: 16px;
+  padding: 2rem;
+  max-width: 450px;
+  width: 90%;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  position: relative;
+  animation: scaleIn 0.25s ease-in-out;
+}
+
+/* Modal Header */
+.modal-box h3 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 1rem;
+}
+
+/* Wallet Button List */
+.wallet-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+/* Wallet Button */
+.wallet-button {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background-color: #f0fdfa;
+  border: 2px solid #0f766e;
+  color: #0f766e;
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.wallet-button:hover {
+  background-color: #ccfbf1;
+}
+
+/* Wallet Icon */
+.wallet-button img {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+}
+
+/* Divider */
+.divider {
+  border-top: 1px solid #e5e7eb;
+  margin: 1.5rem 0;
+}
+
+/* Action Buttons */
+.modal-action {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+.btn {
+  padding: 0.5rem 1.25rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border: none;
+}
+
+.btn-close {
+  background-color: #e5e7eb;
+  color: #111827;
+}
+
+.btn-close:hover {
+  background-color: #d1d5db;
+}
+
+.btn-logout {
+  background-color: #f59e0b;
+  color: white;
+}
+
+.btn-logout:hover {
+  background-color: #d97706;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
