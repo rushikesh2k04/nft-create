@@ -1,7 +1,9 @@
-// src/components/methods.ts
 import * as algokit from '@algorandfoundation/algokit-utils'
 import algosdk, { TransactionSigner } from 'algosdk'
 
+/**
+ * Creates an Algorand Standard Asset (ASA) and returns the asset ID.
+ */
 export async function create(
   algodClient: algokit.AlgorandClient,
   sender: string,
@@ -10,6 +12,8 @@ export async function create(
   assetname: string,
   url: string,
 ): Promise<bigint> {
+
+
   const assetCreate = await algodClient.send.assetCreate({
     sender,
     total: quantity,
@@ -20,10 +24,15 @@ export async function create(
   })
 
   const assetId = BigInt(assetCreate.confirmation.assetIndex!)
-  console.log("Asset created with ID:", assetId)
+  if (!assetId) throw new Error("Asset creation failed, no ID returned")
+
+  console.log("✅ Asset created with ID:", assetId)
   return assetId
 }
 
+/**
+ * Opts in a receiver address to a specific ASA, if not already opted-in.
+ */
 export async function optInToAsset(
   algorand: algokit.AlgorandClient,
   assetId: bigint,
@@ -47,7 +56,6 @@ export async function optInToAsset(
   const algodClient = algorand.client.algod;
   await atc.execute(algodClient, 2);
 }
-
 
 /**
  * Transfers a given amount of ASA from sender to receiver.
