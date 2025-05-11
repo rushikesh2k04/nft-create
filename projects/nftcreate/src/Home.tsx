@@ -7,7 +7,6 @@ import MethodCall from './components/MethodCall'
 import * as methods from './methods'
 import { getAlgodConfigFromViteEnvironment } from './utils/network/getAlgoClientConfigs'
 import NFTForm from './components/NFTForm'
-
 import './styles/Home.css'
 
 const Home: React.FC = () => {
