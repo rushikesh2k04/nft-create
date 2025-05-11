@@ -39,7 +39,7 @@ const Home: React.FC = () => {
           Wallet Connection
         </button>
 
-        <label>Unitary Price (ALGO)</label>
+        <label>Price (ALGO)</label>
         <input
           type="number"
           value={(unitaryPrice / 1_000_000n).toString()}
