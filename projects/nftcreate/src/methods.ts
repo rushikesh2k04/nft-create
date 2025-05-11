@@ -22,3 +22,27 @@ export async function create(
   console.log("Asset created with ID:", assetId)
   return assetId
 }
+
+export async function optInToAsset(
+  algorand: algokit.AlgorandClient,
+  assetId: bigint,
+  receiver: string,
+  signer: algosdk.TransactionSigner
+) {
+  const suggestedParams = await algorand.getSuggestedParams();
+
+  const txn = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
+    sender: receiver,
+    receiver: receiver,
+    assetIndex: Number(assetId),
+    amount: 0,
+    suggestedParams,
+  });
+
+  const atc = new algosdk.AtomicTransactionComposer();
+  atc.addTransaction({ txn, signer });
+
+  // Use the algod client directly
+  const algodClient = algorand.client.algod;
+  await atc.execute(algodClient, 2);
+}
