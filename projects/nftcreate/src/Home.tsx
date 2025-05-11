@@ -34,7 +34,7 @@ const Home: React.FC = () => {
     <div className="home-container">
       <div className="form-card">
         <h1>Welcome to <span className="bold">AlgoKit 🙂</span></h1>
-        <p className="subtitle">Digital Market your</p>
+        <p className="subtitle">Digital Market</p>
 
         <button className="wallet-btn" onClick={toggleWalletModal}>
           Wallet Connection
