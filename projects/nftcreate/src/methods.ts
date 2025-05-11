@@ -47,3 +47,26 @@ export async function optInToAsset(
   const algodClient = algorand.client.algod;
   await atc.execute(algodClient, 2);
 }
+
+
+/**
+ * Transfers a given amount of ASA from sender to receiver.
+ */
+export async function transferAsset(
+  algodClient: algokit.AlgorandClient,
+  assetId: bigint,
+  sender: string,
+  receiver: string,
+  amount: bigint,
+): Promise<void> {
+
+
+  await algodClient.send.assetTransfer({
+    sender,
+    assetId,
+    amount,
+    receiver,
+  })
+
+  console.log(`✅ Transferred ${amount} of asset ${assetId} from ${sender} to ${receiver}`)
+}
